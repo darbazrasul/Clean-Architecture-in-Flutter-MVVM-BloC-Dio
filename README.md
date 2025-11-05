@@ -1,4 +1,4 @@
-# 🏢 HR Management System - Flutter Clean Architecture
+# 🏢 Flutter Clean Architecture
 
 A production-ready Flutter application implementing Clean Architecture principles with BLoC state management, showcasing best practices for scalable and maintainable mobile app development.
 
@@ -24,7 +24,7 @@ A production-ready Flutter application implementing Clean Architecture principle
 
 ## 🎯 Overview
 
-This HR Management System is a comprehensive Flutter application that demonstrates enterprise-level architecture and development practices. Built with Clean Architecture and BLoC pattern, it provides a robust foundation for managing properties, transactions, and business operations.
+This Clean-Architecture-in-Flutter-MVVM-BloC-Dio.gitv is a comprehensive Flutter application that demonstrates enterprise-level architecture and development practices. Built with Clean Architecture and BLoC pattern, it provides a robust foundation for managing properties, transactions, and business operations.
 
 ### Why This Architecture?
 
@@ -275,8 +275,8 @@ lib/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/hr-management-system.git
-   cd hr-management-system
+   git clone https://github.com/darbazrasul/Clean-Architecture-in-Flutter-MVVM-BloC-Dio.git
+   cd Clean-Architecture-in-Flutter-MVVM-BloC-Dio
    ```
 
 2. **Install dependencies**
@@ -673,9 +673,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Darbaz** - Flutter Developer
 
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
+- GitHub: [@darbazrasul](https://github.com/darbazrasul)
+- LinkedIn: [@darbaz-rasull](https://www.linkedin.com/in/darbaz-rasull-19375a252/)
+- Email: darbazrasul721@gmail.com
 
 ## 🙏 Acknowledgments
 
@@ -696,8 +696,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Domain-Driven Design by Eric Evans
 
 ### Articles
-- [Flutter App Architecture: The Repository Pattern](https://codewithandrea.com/articles/flutter-repository-pattern/)
-- [Riverpod vs BLoC: A Comparison](https://codewithandrea.com/articles/flutter-state-management-riverpod-bloc/)
+- [Flutter App Architecture: The Repository Pattern](https://medium.com/ayt-technologies/flutter-clean-architecture-repository-pattern-df418968c731)
+- [Riverpod vs BLoC: A Comparison](https://ms3byoussef.medium.com/state-management-in-flutter-provider-vs-riverpod-vs-bloc-333795f0df22)
 
 ---
 

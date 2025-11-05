@@ -1,0 +1,199 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  # Analyze and Test
+  analyze_and_test:
+    name: Analyze & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        cache: true
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Verify formatting
+      run: dart format --output=none --set-exit-if-changed .
+      
+    - name: Analyze project source
+      run: flutter analyze
+      
+    - name: Run tests
+      run: flutter test --coverage
+      
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage/lcov.info
+        fail_ci_if_error: false
+        verbose: true
+
+  # Build Android
+  build_android:
+    name: Build Android
+    needs: analyze_and_test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        cache: true
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Build APK
+      run: flutter build apk --release
+      
+    - name: Build App Bundle
+      run: flutter build appbundle --release
+      
+    - name: Upload APK
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-apk
+        path: build/app/outputs/flutter-apk/app-release.apk
+        
+    - name: Upload App Bundle
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-appbundle
+        path: build/app/outputs/bundle/release/app-release.aab
+
+  # Build iOS
+  build_ios:
+    name: Build iOS
+    needs: analyze_and_test
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        cache: true
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Build iOS (no-codesign)
+      run: flutter build ios --release --no-codesign
+      
+    - name: Upload iOS Build
+      uses: actions/upload-artifact@v3
+      with:
+        name: ios-build
+        path: build/ios/iphoneos/Runner.app
+
+  # Build Web
+  build_web:
+    name: Build Web
+    needs: analyze_and_test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.16.0'
+        channel: 'stable'
+        cache: true
+        
+    - name: Get dependencies
+      run: flutter pub get
+      
+    - name: Build Web
+      run: flutter build web --release
+      
+    - name: Upload Web Build
+      uses: actions/upload-artifact@v3
+      with:
+        name: web-build
+        path: build/web
+
+  # Create Release (only on tag)
+  create_release:
+    name: Create Release
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build_android, build_ios, build_web]
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Download Android APK
+      uses: actions/download-artifact@v3
+      with:
+        name: android-apk
+        path: artifacts/
+        
+    - name: Download Android App Bundle
+      uses: actions/download-artifact@v3
+      with:
+        name: android-appbundle
+        path: artifacts/
+        
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          artifacts/app-release.apk
+          artifacts/app-release.aab
+        body: |
+          ## Release Notes
+          
+          ### What's New
+          - See CHANGELOG.md for details
+          
+          ### Download
+          - **APK**: Direct installation file for Android
+          - **AAB**: App bundle for Google Play Store
+          
+          ### Installation
+          For APK: Download and install on your Android device
+          For AAB: Upload to Google Play Console
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
